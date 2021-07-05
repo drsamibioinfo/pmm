@@ -16,6 +16,8 @@ def main():
         chrs = [x.replace("\n", "") for x in chrs]
 
     for chr in chrs:
+        if len(chr) <= 1:
+            continue
         out_file = os.path.join(out_dir, f"{prefix}.{chr}.vcf")
         print(f"Splitting VCF for Chromosome: {chr}")
         split_cmd = f"bcftools view --regions {chr} {vcf_file} > {out_file}"
@@ -24,8 +26,8 @@ def main():
         print(f"Annotating: {out_file}")
         vep_cmd = f"vep -i {out_file} \
             --offline \
-            --fasta /root/.vep/homo_sapiens/102_GRCh38/ \
-            --plugin dbNSFP,/home/snouto/mendel/data/nsfp/dbNSFP4.2a_variant.{chr}.gz,Ensembl_transcriptid,Uniprot_acc,VEP_canonical,LRT_pred,SIFT_pred,MutationTaster_pred,Polyphen2_HDIV_pred,Polyphen2_HVAR_pred \
+            --fasta /root/.vep/homo_sapiens/104_GRCh38/Homo_sapiens.GRCh38.dna.toplevel.fa.gz \
+            --plugin dbNSFP,/home/snouto/mendel/data/nsfp/dbNSFP4.2a.gz,Ensembl_transcriptid,Uniprot_acc,VEP_canonical,LRT_pred,SIFT_pred,MutationTaster_pred,Polyphen2_HDIV_pred,Polyphen2_HVAR_pred \
             -everything \
             --buffer_size 100000 \
             --force_overwrite \
