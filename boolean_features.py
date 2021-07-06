@@ -99,6 +99,7 @@ for contig in contigs:
     if samples_contig is None:
         raise ValueError('ERROR: wrong format in {}'.format(vcf))
     print('Number of samples for contig {}: {}'.format(contig, len(samples_contig)))
+    samples_contig = [''.join(sample.split('_')[:-1]) for sample in samples_contig]
     ind_vcf_samples = []
     sex_samples = {}
     samples = []
@@ -124,25 +125,9 @@ for contig in contigs:
             if l[0] != '#':
                 l = l.split()
                 idd = l[0]
-
-                #chrom = l[0].split(':')[0]
-                #ref = l[0].split(':')[2]
-                #alt = l[0].split(':')[3]
-                #pos = l[1].split(':')[1]
-                #start = int(pos.split('-')[0])
-                #if '-' in pos:
-                #    end = int(pos.split('-')[1])
-                #else:
-                #    end = start
-                #gene = l[3]
-                #feat_type = l[5]
-                #cons = l[6]
-                #extra = l[13]
-                
-                # CHANGE: begin
-                chrom = l[1].split(':')[0]
-                ref = 'R' # I don't see the reference in any position in your file, so I'm using a dummy value here just to avoid changing the rest of the code
-                alt = l[2]
+                chrom = l[0].split(':')[0]
+                ref = l[0].split(':')[2]
+                alt = l[0].split(':')[3]
                 pos = l[1].split(':')[1]
                 start = int(pos.split('-')[0])
                 if '-' in pos:
@@ -152,9 +137,7 @@ for contig in contigs:
                 gene = l[3]
                 feat_type = l[5]
                 cons = l[6]
-                extra = l[13] # Could you check is this is correct ? It should be the part starting including the gnomAD annotations
-                # CHANGE: end
-
+                extra = l[13]
                 if gnomAD_ancestry in extra:
                     ind = extra.index('{}='.format(gnomAD_ancestry))
                     af = float(extra[ind:].split(';')[0].split('=')[1])
@@ -235,8 +218,7 @@ for contig in contigs:
                             data = info.merge(gts, left_on = 'id', right_on = 'id')
                             #data.to_csv('variants_annotated_{}.csv'.format(gene_name))
                             keep = np.logical_or.reduce( [data['cons'].str.contains(variant_type) for variant_type in ['transcript_ablation', 'splice_acceptor_variant', 'splice_donor_variant', 'stop_gained', 'frameshift_variant', 'stop_lost', 'start_lost', 'transcript_amplification', 'inframe_insertion', 'inframe_deletion', 'missense_variant', 'protein_altering_variant']] )
-                            #same_len = data['ref'].str.len() == data['alt'].str.len()
-                            same_len = data['start'] == data['end'] # CHANGE: as you don't have the ref. I'm using the length to separate SNPs from INDELs
+                            same_len = data['ref'].str.len() == data['alt'].str.len()
                             unique = np.sum(data[samples].astype(int), axis = 1).astype(int) == 1
                             pat = data['clin_sig'].str.contains('athogenic')
                             var1 = np.logical_and.reduce( ( keep, same_len, np.logical_or(data['af'] < frequency_ultrarare, data['af'] == -1.0) ) ) # SNP to keep with frequency < frequency_ultrarare
