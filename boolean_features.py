@@ -6,13 +6,13 @@ import glob
 import pandas as pd
 import numpy as np
 
-home_vcf = '..' # FOLDER CONTAINING VCF FILES
-vcf_prefix = 'joint.2' # PREFIX OF YOUR VCF FILE, in my case the files are named: ../../joint.3.chr*.vcf.gz
-home_annot = '../Annotation_all_samples' # FOLDER CONTAINING ANNOTATION FILES SORTED BY GENES
-annot_prefix = 'finalAnnot.SortByGene' # PREFIX OF VEP ANNOTATION FILE, in my case the files are named: ../finalAnnot.SortByGene.chr*.txt
-gnomAD_ancestry='gnomAD_NFE_AF'  # SELECTED ANCESTRY IN GNOMAD, CHANGE THIS TO YOUR ANCESTRY
-exac_ancestry = 'EUR_AF'# SELECTED ANCESTRY IN EXAC, CHANGE THIS TO YOUR ANCESTRY
-phenotype = '../pheno.csv' # SEE FORMAT IN THE REPOSITORY README FILE
+home_vcf = 'vcfs' # FOLDER CONTAINING VCF FILES
+vcf_prefix = 'middle_eastern.sgp' # PREFIX OF YOUR VCF FILE, in my case the files are named: ../../joint.3.chr*.vcf.gz
+home_annot = 'sorted' # FOLDER CONTAINING ANNOTATION FILES SORTED BY GENES
+annot_prefix = 'middle_eastern.sgp.SortByGene' # PREFIX OF VEP ANNOTATION FILE, in my case the files are named: ../finalAnnot.SortByGene.chr*.txt
+gnomAD_ancestry='gnomAD_EAS_AF'  # SELECTED ANCESTRY IN GNOMAD, CHANGE THIS TO YOUR ANCESTRY
+exac_ancestry = 'EAS_AF'# SELECTED ANCESTRY IN EXAC, CHANGE THIS TO YOUR ANCESTRY
+phenotype = './pmm.pheno.final.csv' # SEE FORMAT IN THE REPOSITORY README FILE
 
 def update_variants_per_gene(data, bool_single, bool_multi, samples, gene):
     gene_with = np.any(data, axis = 0).astype(int)

@@ -11,6 +11,16 @@ def main():
     if not os.path.exists(sorted_dir):
         os.makedirs(sorted_dir)
     vcf_file = "/home/snouto/mendel/data/middle_eastern478_finalgatk4_newcovid19_recal.vcf.gz"
+    vcf_out = "/home/snouto/mendel/data/middle_eastern478_finalgatk4_newcovid19_recal.aligned.vcf.gz"
+    print("Left-align and normalize VCF")
+    normalize_vcf = f"bcftools filter -r chr1,chr2,chr3,chr4,chr5,chr6,chr7,chr8,chr9,chr10,chr11,chr12,chr13,chr14,chr15,chr16,chr17,chr18,chr19,chr20,chr21,chr22,chrX,chrY \
+    {vcf_file} -Ou | \
+    bcftools norm -m -any --check-ref w -f /home/snouto/ref/Homo_sapiens_assembly38.fasta -Ou | \
+    bcftools annotate --set-id '%CHROM:%POS:%REF:%FIRST_ALT' -Oz > {vcf_out}"
+    execute(normalize_vcf)
+    print("Indexing the aligned vcf")
+    execute(f"tabix {vcf_out}")
+
     with open("/home/snouto/mendel/data/chromosomes.txt") as cfile:
         chrs = cfile.readlines()
         chrs = [x.replace("\n", "") for x in chrs]
@@ -20,9 +30,10 @@ def main():
             continue
         out_file = os.path.join(out_dir, f"{prefix}.{chr}.vcf")
         print(f"Splitting VCF for Chromosome: {chr}")
-        split_cmd = f"bcftools view --regions {chr} {vcf_file} > {out_file}"
+        split_cmd = f"bcftools view --regions {chr} {vcf_out} > {out_file}"
         print(f"Running Command: {split_cmd}")
         execute(split_cmd)
+
         print(f"Annotating: {out_file}")
         vep_cmd = f"vep -i {out_file} \
             --offline \
