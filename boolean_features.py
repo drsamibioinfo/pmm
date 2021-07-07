@@ -160,7 +160,12 @@ for contig in contigs:
                     clin_sig = ''
                 if (gene != gene_old):
                     if (gene_old is not None) and ('ENSG' in gene_old):
-                        gene_name = np.unique(ens2name['Gene name'].loc[(ens2name['Gene stable ID'] == gene_old)].values)[0]
+                        #gene_name = np.unique(ens2name['Gene name'].loc[(ens2name['Gene stable ID'] == gene_old)].values)[0]
+                        if gene_old in ens2name['Gene stable ID'].values:
+                            gene_name = np.unique(ens2name['Gene name'].loc[(ens2name['Gene stable ID'] == gene_old)].values)[0]
+                        else:
+                            print('WARNING: gene {} non in ensemblid_names.csv'.format(gene_old))
+                            gene_name = gene_old
                         info = pd.DataFrame(gene_data, columns = ['id', 'chrom', 'start', 'end', 'ref', 'alt', 'gene', 'feat_type', 'cons', 'af', 'switch', 'clin_sig'])
                         info.drop_duplicates(subset = 'id', inplace = True)
                         info.sort_values(by = 'id', axis = 0, inplace = True)
