@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 This program requires bcftools (accessible from the PATH)
 """
